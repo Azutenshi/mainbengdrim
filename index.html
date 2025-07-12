@@ -68,7 +68,7 @@
   </div>
 
   <button id="spin">Spin (Rp 100.000)</button>
-  <button id="topup">Top Up (+Rp 50.000)</button>
+  <button id="topup">Top Up (+Rp 500.000)</button>
 
   <div id="message"></div>
 
@@ -162,7 +162,7 @@
 
     function topUp() {
       topupSound.play();
-      balance += 50000;
+      balance += 500000;
       updateBalance();
       messageEl.textContent = "💰 Top up berhasil!";
     }
