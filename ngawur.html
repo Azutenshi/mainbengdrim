@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>judol online rungkad 100%</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .reels {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .reels img {
+      width: 80px;
+      height: 80px;
+    }
+
+    button {
+      padding: 0.75rem 2rem;
+      font-size: 1.25rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 0.5rem;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    #message {
+      margin-top: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    #balance {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    #probabilities {
+      margin-top: 2rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Judol Online 100% Rungkad</h1>
+
+  <div id="balance">Saldo: Rp 100.000</div>
+
+  <div class="reels">
+    <img id="reel1" src="" alt="?">
+    <img id="reel2" src="" alt="?">
+    <img id="reel3" src="" alt="?">
+  </div>
+
+  <button id="spin">Spin (Rp 100.000)</button>
+  <button id="topup">Top Up (+Rp 50.000)</button>
+
+  <div id="message"></div>
+
+  <div id="probabilities">
+    🎰 <strong>Persentase Jackpot (3 simbol sama):</strong><br>
+    - Tomori (Rp 5.000):  0.901%<br>
+    - Anon (Rp 10.000): 0.0901%<br>
+    - Raana (Rp 40.000): 0.0401%<br>
+    - Mutsumi (Rp 100.000): 0.0101%<br>
+    - Sakiko (Rp 1.000.000): 0.001%<br>
+  </div>
+
+  <audio id="spinSound" src="sounds/spin.mp3"></audio>
+  <audio id="winSound" src="sounds/win.mp3"></audio>
+  <audio id="topupSound" src="sounds/topup.mp3"></audio>
+  <audio id="errorSound" src="sounds/error.mp3"></audio>
+
+  <script>
+    const symbols = ["Tomori", "Anon", "Raana", "Mutsumi", "Sakiko"];
+
+    function getSymbolByProbability() {
+      const roll = Math.random() * 100;
+      if (roll < 0.001) return "Sakiko";      // 0,001 %
+      if (roll < 0.0101) return "Mutsumi";        // 0,1 %
+      if (roll < 0.0401) return "Raana";         // 0,3 %
+      if (roll < 0.0901) return "Anon";        // 0,5 %
+      if (roll < 0.901) return "Tomori";       // 1 %
+      return symbols[Math.floor(Math.random() * symbols.length)];
+    }
+
+    const prizeMap = {
+      Tomori: 5000,
+      Anon: 10000,
+      Raana: 40000,
+      Mutsumi: 100000,
+      Sakiko: 1000000
+    };
+
+    const reelEls = [
+      document.getElementById("reel1"),
+      document.getElementById("reel2"),
+      document.getElementById("reel3")
+    ];
+    const messageEl = document.getElementById("message");
+    const spinBtn = document.getElementById("spin");
+    const topupBtn = document.getElementById("topup");
+    const balanceEl = document.getElementById("balance");
+
+    const spinSound = document.getElementById("spinSound");
+    const winSound = document.getElementById("winSound");
+    const topupSound = document.getElementById("topupSound");
+    const errorSound = document.getElementById("errorSound");
+
+    let balance = 100000;
+
+    function updateBalance() {
+      balanceEl.textContent = `Saldo: Rp ${balance.toLocaleString()}`;
+    }
+
+    function spin() {
+      if (balance < 100000) {
+        errorSound.play();
+        messageEl.textContent = "💸 Saldo tidak cukup untuk spin!";
+        return;
+      }
+
+      spinSound.play();
+      balance -= 100000;
+      updateBalance();
+      messageEl.textContent = "";
+
+      const results = reelEls.map((reel) => {
+        const name = getSymbolByProbability();
+        reel.src = `images/${name}.png`;
+        reel.alt = name;
+        return name;
+      });
+
+      const allMatch = results.every((name) => name === results[0]);
+
+      if (allMatch) {
+        const reward = prizeMap[results[0]] || 0;
+        balance += reward;
+        updateBalance();
+        winSound.play();
+        messageEl.textContent = `🎉 JACKPOT! 3 ${results[0]}! Kamu menang Rp ${reward.toLocaleString()}!`;
+      } else {
+        messageEl.textContent = "Tolol Masih Aja Dimainin!";
+      }
+    }
+
+    function topUp() {
+      topupSound.play();
+      balance += 50000;
+      updateBalance();
+      messageEl.textContent = "💰 Top up berhasil!";
+    }
+
+    spinBtn.addEventListener("click", spin);
+    topupBtn.addEventListener("click", topUp);
+
+    updateBalance();
+  </script>
+</body>
+</html>
